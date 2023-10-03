@@ -79,57 +79,8 @@ resource "aws_route_table_association" "rta2" {
  route_table_id = aws_route_table.rt1.id
 }
 
-## Security group
 
-resource "aws_security_group" "sg-demo" {
-    name = "webserver-sg-dev"
-    description = "Allow ssh and httpd"
-    vpc_id = aws_vpc.vpc1.id
 
-    ingress {
-        description = "allow ssh"
-        from_port = 22
-        to_port = 22
-        protocol = "tcp"
-        cidr_blocks = ["0.0.0.0/0"]
-    }
-    ingress {
-        description = "allow http"
-        from_port = 80
-        to_port = 80
-        protocol = "tcp"
-        cidr_blocks = ["0.0.0.0/0"]
-    }
-    egress {
-        from_port = 0
-        to_port = 0
-        protocol = "-1"
-        cidr_blocks = ["0.0.0.0/0"]
-    }
-  tags= {
-    env = "Dev"
-  }
 
-  
-}
-## Ec2 instance 
-
-resource "aws_instance" "ec2-demo" {
-    ami = "ami-0bb4c991fa89d4b9b"
-    vpc_security_group_ids = [aws_security_group.sg-demo.id]
-    instance_type = "t2.micro"
-    key_name = "ec2-demo.kp"
-    subnet_id = aws_subnet.public_subnet1.id
-    user_data = file("install.sh")
-    tags={
-        Name = "Terraform instance"
-        env = "Dev"
-    }
-
-}
-output "public-ip" {
-    value = aws_instance.ec2-demo.public_ip
-  
-}
 
 
